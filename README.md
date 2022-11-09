@@ -1,6 +1,6 @@
 # randomselector
 Randomly select objects in golang
-Current version: v0.0.3
+Current version: v0.0.5
 ## Install 
 ```console
 go get  github.com/zeroboo/randomselector
