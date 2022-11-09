@@ -1,6 +1,6 @@
 # randomselector
 Randomly select objects in golang
-Current version: 0.0.1
+Current version: v0.0.2
 ## Install 
 ```console
 go get  github.com/zeroboo/randomselector
@@ -12,7 +12,7 @@ go test -timeout 60s github.com/zeroboo/randomselector -v
 ```
 
 ## Publish
-Example with VERSION=v0.3.6
+Example with VERSION=v0.0.2
 
 - Tag on git
 
@@ -25,5 +25,5 @@ git push $VERSION
 
 ```console
 SET GOPROXY=proxy.golang.org 
-go list -m github.com/zeroboo/serverutils@$VERSION
+go list -m github.com/zeroboo/randomselector@$VERSION
 ```
