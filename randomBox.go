@@ -4,11 +4,12 @@ import (
 	"math/rand"
 )
 
+type RandomItemInterface interface {
+	GetRate() int
+}
+
 // RandomContent contains target of random picking and rates
 type RandomContent struct {
-	//Name is name of content
-	Name string
-
 	//Content is object to be randomly selected
 	Content any
 

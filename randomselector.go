@@ -30,3 +30,14 @@ func CreateRandomBox(maxRate int, returnSelectedItems bool, contents ...RandomCo
 func CreateRandomBoxNoFailure(hasReplacement bool, contents ...RandomContent) *RandomBag {
 	return CreateRandomBox(RandomRateNone, hasReplacement, contents...)
 }
+
+func CreateRandomBoxNoFailureFromItems(hasReplacement bool, items ...RandomItemInterface) *RandomBag {
+	contents := make([]RandomContent, len(items))
+	for i := 0; i < len(items); i++ {
+		contents[i] = RandomContent{
+			Content: items[i],
+			Rate:    items[i].GetRate(),
+		}
+	}
+	return CreateRandomBox(RandomRateNone, hasReplacement, contents...)
+}
