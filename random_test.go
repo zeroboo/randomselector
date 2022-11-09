@@ -16,7 +16,7 @@ func TestRandomPick(t *testing.T) {
 
 // go test -timeout 30s -run ^TestRandomBagCreating_Correct$ github.com/zeroboo/randomselector -v
 func TestRandomBagCreating_Correct(t *testing.T) {
-	var randomBox *RandomBag = CreateRandomBoxNoReplacement(1235, RandomContent{
+	var randomBox *RandomBag = CreateRandomBox(1235, true, RandomContent{
 		Name:    "1",
 		Content: "string 1",
 		Rate:    100,
@@ -38,7 +38,7 @@ func TestRandomBagCreating_Correct(t *testing.T) {
 // Full rate means box has no chance of missing in selecting
 // go test -timeout 30s -run ^TestRandomBag_SelectingFullRate_NoNilResult$ github.com/zeroboo/randomselector -v
 func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
-	var randomBox *RandomBag = CreateRandomBoxNoReplacement(1000, RandomContent{
+	var randomBox *RandomBag = CreateRandomBox(1000, true, RandomContent{
 		Name:    "1",
 		Content: "string 1",
 		Rate:    100,
@@ -75,7 +75,7 @@ type TestItem struct {
 // TestRandomBag_SelectingFullRateWithStruct_NoNilResult: test box full rate with content is a struct
 // go test -timeout 30s -run ^TestRandomBag_SelectingFullRateWithStruct_NoNilResult$ github.com/zeroboo/randomselector -v
 func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
-	var randomBox *RandomBag = CreateRandomBoxNoReplacement(1000, RandomContent{
+	var randomBox *RandomBag = CreateRandomBox(1000, true, RandomContent{
 		Name: "1",
 		Content: TestItem{
 			ID:    "item1",
@@ -119,7 +119,7 @@ func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
 // TestRandomBag_SelectedNil_Correct: test box full rate with content is a struct
 // go test -timeout 30s -run ^TestRandomBag_SelectedNil_Correct$ github.com/zeroboo/randomselector -v
 func TestRandomBag_SelectedNil_Correct(t *testing.T) {
-	var randomBox *RandomBag = CreateRandomBoxNoReplacement(1000, RandomContent{
+	var randomBox *RandomBag = CreateRandomBox(1000, true, RandomContent{
 		Name: "1",
 		Content: TestItem{
 			ID:    "item1",
