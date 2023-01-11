@@ -17,6 +17,9 @@ type RandomContent struct {
 	//
 	//Zero means this content will never appear. Negative values are ERRONEOUS
 	Rate int
+
+	//Name is name of content
+	Name string
 }
 
 // RandomSelectable can return a randomly object inside
