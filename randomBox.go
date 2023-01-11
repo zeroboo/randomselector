@@ -4,11 +4,12 @@ import (
 	"math/rand"
 )
 
+type RandomItemInterface interface {
+	GetRate() int
+}
+
 // RandomContent contains target of random picking and rates
 type RandomContent struct {
-	//Name is name of content
-	Name string
-
 	//Content is object to be randomly selected
 	Content any
 
@@ -38,8 +39,8 @@ type RandomBag struct {
 	//maxRate is the maximum value of random (exclusive)
 	maxRate int
 
-	//maxRateHasValidItem is the maximum rates that selecting has a valid result
-	maxRateHasValidItem int
+	//totalItemRates is the maximum rates that selecting has a valid result
+	totalItemRates int
 
 	//accRates stores rates of [contents] in continuous list. [accRates] is correspondence to [contents],
 	//It means accRates[i] stands for contents[i]
@@ -51,6 +52,11 @@ type RandomBag struct {
 	//  - with random rate is 20->29, selected item is content[2]
 	//  - with random rate is >=30, selected item is nil
 	accRates []int
+
+	//returnSelectedItems has replacement or not:
+	//  - if true, items after selecting will not be changed
+	//  - if false, item selected will be removed from list
+	returnSelectedItems bool
 }
 
 // Select returns an object randomly with replacement.
@@ -80,14 +86,14 @@ func (bag *RandomBag) GetMaxRate() int {
 }
 
 // initRates prepares cached values for picking
-func (bag *RandomBag) initRates() {
+func (bag *RandomBag) initRates() int {
 	bag.accRates = make([]int, len(bag.contents))
-	accRate := 0
+	totalAccRate := 0
 	for i := 0; i < len(bag.contents); i++ {
-		accRate += bag.contents[i].Rate
-		bag.accRates[i] = accRate
+		totalAccRate += bag.contents[i].Rate
+		bag.accRates[i] = totalAccRate
 	}
-	bag.maxRateHasValidItem = accRate
+	return totalAccRate
 }
 
 // GetAccRates return accRates
