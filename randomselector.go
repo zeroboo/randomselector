@@ -27,12 +27,14 @@ func CreateRandomBox(maxRate int, returnSelectedItems bool, contents ...RandomCo
 	var randomBag *RandomBag = &RandomBag{}
 	randomBag.contents = contents
 	randomBag.totalItemRates = randomBag.initRates()
+
 	if maxRate > RandomRateNone {
 		randomBag.maxRate = maxRate
 	} else {
 		randomBag.maxRate = randomBag.totalItemRates
 	}
 	randomBag.returnSelectedItems = returnSelectedItems
+
 	return randomBag
 }
 
@@ -54,4 +56,8 @@ func CreateRandomBoxNoFailureFromItems(hasReplacement bool, items ...RandomItemI
 		}
 	}
 	return CreateRandomBox(RandomRateNone, hasReplacement, contents...)
+}
+
+func CreateEmptyRandomBox(maxRate int, hasReplacement bool) *RandomBag {
+	return CreateRandomBox(maxRate, hasReplacement)
 }

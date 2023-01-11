@@ -112,3 +112,17 @@ func (bag *RandomBag) initRates() int {
 func (bag *RandomBag) GetAccRates() []int {
 	return bag.accRates
 }
+
+func (bag *RandomBag) AddItem(item RandomItemInterface) {
+	newContent := RandomContent{
+		Content: item,
+		Rate:    item.GetRate(),
+		Name:    item.GetName(),
+	}
+	bag.contents = append(bag.contents, newContent)
+	bag.totalItemRates = bag.initRates()
+
+	if bag.maxRate == RandomRateNone {
+		bag.maxRate = bag.totalItemRates
+	}
+}
