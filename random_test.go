@@ -112,6 +112,7 @@ func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
 		selectedValue := randomBox.SelectRandom()
 		log.Printf("Selected values: %v", selectedValue)
 		assert.NotEqual(t, nil, selectedValue, "Selected value must not be nil")
+		assert.IsType(t, TestItem{}, selectedValue, "Correct selected type")
 	}
 
 }
@@ -143,5 +144,4 @@ func TestRandomBag_SelectedNil_Correct(t *testing.T) {
 		log.Printf("Selected values: %v", selectedValue)
 		assert.Equal(t, nil, selectedValue, "Selected value must be nil")
 	}
-
 }

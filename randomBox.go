@@ -6,6 +6,7 @@ import (
 
 type RandomItemInterface interface {
 	GetRate() int
+	GetName() string
 }
 
 // RandomContent contains target of random picking and rates
@@ -20,6 +21,14 @@ type RandomContent struct {
 
 	//Name is name of content
 	Name string
+}
+
+func (content RandomContent) GetRate() int {
+	return content.Rate
+}
+
+func (content RandomContent) GetName() int {
+	return content.Rate
 }
 
 // RandomSelectable can return a randomly object inside

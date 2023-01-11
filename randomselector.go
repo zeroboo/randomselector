@@ -12,7 +12,7 @@ func init() {
 
 const RandomRateNone int = -1
 
-// CreateRandomBox returns random bags with config:
+// CreateRandomBox returns a random bag with config:
 //
 // - maxRate: maximum value of random rate. If maxRate <= RandomRateNone, maxRate will be calculated as the sum of rate of all items
 //
@@ -22,7 +22,7 @@ const RandomRateNone int = -1
 //
 //   - false means picked items will be removed from next random
 //
-// - contents
+// - contents: are items to be randomized in random bag
 func CreateRandomBox(maxRate int, returnSelectedItems bool, contents ...RandomContent) *RandomBag {
 	var randomBag *RandomBag = &RandomBag{}
 	randomBag.contents = contents
@@ -36,6 +36,11 @@ func CreateRandomBox(maxRate int, returnSelectedItems bool, contents ...RandomCo
 	return randomBag
 }
 
+// CreateRandomBoxNoFailure return a random box with
+//
+//   - Items have equal rates
+//
+//   - Every selecting returns an item (no chance of failure) if the bag has item
 func CreateRandomBoxNoFailure(hasReplacement bool, contents ...RandomContent) *RandomBag {
 	return CreateRandomBox(RandomRateNone, hasReplacement, contents...)
 }
