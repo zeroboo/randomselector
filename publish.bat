@@ -1,4 +1,4 @@
-SET VERSION=v0.0.7
+SET VERSION=v0.0.9
 
 git tag %VERSION%
 git push origin %VERSION%

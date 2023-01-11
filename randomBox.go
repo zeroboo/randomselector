@@ -1,7 +1,11 @@
 package randomselector
 
 import (
+	"bytes"
+	"fmt"
 	"math/rand"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type RandomItemInterface interface {
@@ -27,8 +31,8 @@ func (content RandomContent) GetRate() int {
 	return content.Rate
 }
 
-func (content RandomContent) GetName() int {
-	return content.Rate
+func (content RandomContent) GetName() string {
+	return content.Name
 }
 
 // RandomSelectable can return a randomly object inside
@@ -48,6 +52,10 @@ type RandomSelectable interface {
 // RandomBag return object randomly with replacement (each selecting is independent)
 type RandomBag struct {
 	contents []RandomContent
+
+	//presetMaxRate is the preset max rate of this bag
+	presetMaxRate int
+
 	//maxRate is the maximum value of random (exclusive)
 	maxRate int
 
@@ -105,12 +113,35 @@ func (bag *RandomBag) initRates() int {
 		totalAccRate += bag.contents[i].Rate
 		bag.accRates[i] = totalAccRate
 	}
+	bag.updateMaxRates()
 	return totalAccRate
+}
+
+func (bag *RandomBag) updateMaxRates() {
+	if bag.presetMaxRate > RandomRateNone {
+		bag.maxRate = bag.presetMaxRate
+	} else {
+		bag.maxRate = bag.totalItemRates
+	}
 }
 
 // GetAccRates return accRates
 func (bag *RandomBag) GetAccRates() []int {
 	return bag.accRates
+}
+
+func (bag *RandomBag) String() string {
+	var buffer bytes.Buffer
+	buffer.WriteString("RandomBag")
+	buffer.WriteString("|ReturnSelectedItems:")
+	buffer.WriteString(fmt.Sprintf("%v", bag.returnSelectedItems))
+	buffer.WriteString("|PresetMaxRate:")
+	buffer.WriteString(fmt.Sprintf("%v", bag.presetMaxRate))
+	buffer.WriteString("|CurrentMaxRate:")
+	buffer.WriteString(fmt.Sprintf("%v", bag.maxRate))
+	buffer.WriteString("|Contents:")
+	buffer.WriteString(fmt.Sprintf("%v", bag.contents))
+	return buffer.String()
 }
 
 func (bag *RandomBag) AddItem(item RandomItemInterface) {
@@ -122,7 +153,9 @@ func (bag *RandomBag) AddItem(item RandomItemInterface) {
 	bag.contents = append(bag.contents, newContent)
 	bag.totalItemRates = bag.initRates()
 
-	if bag.maxRate == RandomRateNone {
-		bag.maxRate = bag.totalItemRates
+	bag.updateMaxRates()
+
+	if log.IsLevelEnabled(log.TraceLevel) {
+		log.Tracef("RandomBox.AddItem: newItem=%v, rate=%v, maxRate=%v, bag=%v", item.GetName(), item.GetRate(), bag.GetMaxRate(), bag.String())
 	}
 }

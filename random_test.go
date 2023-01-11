@@ -2,11 +2,25 @@ package randomselector
 
 import (
 	"fmt"
+	"os"
 	"testing"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMain(m *testing.M) {
+	log.Println("Test randomselector main function")
+	log.SetFormatter(&log.TextFormatter{
+		DisableQuote: true,
+	})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.TraceLevel)
+
+	exitCode := m.Run()
+
+	os.Exit(exitCode)
+}
 
 // go test -timeout 30s -run ^TestRandomPick$ github.com/zeroboo/randomselector -v
 func TestRandomPick(t *testing.T) {
@@ -70,6 +84,15 @@ func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
 type TestItem struct {
 	ID    string
 	Value int
+	Rate  int
+}
+
+func (content TestItem) GetRate() int {
+	return content.Rate
+}
+
+func (content TestItem) GetName() string {
+	return content.ID
 }
 
 // TestRandomBag_SelectingFullRateWithStruct_NoNilResult: test box full rate with content is a struct
@@ -144,4 +167,30 @@ func TestRandomBag_SelectedNil_Correct(t *testing.T) {
 		log.Printf("Selected values: %v", selectedValue)
 		assert.Equal(t, nil, selectedValue, "Selected value must be nil")
 	}
+}
+
+// go test -timeout 30s -run ^TestAddItemToBag_Correct$ github.com/zeroboo/randomselector -v
+func TestAddItemToBag_Correct(t *testing.T) {
+	item1 := TestItem{
+		ID:    "item1",
+		Value: 1,
+		Rate:  1,
+	}
+	item2 := TestItem{
+		ID:    "item2",
+		Value: 2,
+		Rate:  2,
+	}
+	bag := RandomBag{
+		presetMaxRate:       RandomRateNone,
+		returnSelectedItems: true,
+	}
+
+	bag.AddItem(item1)
+	bag.AddItem(item2)
+	bag.AddItem(item2)
+
+	log.Infof("Bag: %v", bag.String())
+	assert.Equal(t, 5, bag.GetMaxRate(), "Correct max rates")
+	assert.Equal(t, 3, len(bag.contents), "Correct item counts")
 }
