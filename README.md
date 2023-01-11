@@ -1,4 +1,5 @@
 # randomselector
+![Coverage](https://img.shields.io/badge/Coverage-77.4%25-brightgreen)
 Randomly select objects in golang
 Current version: v0.0.2
 ## Install 
