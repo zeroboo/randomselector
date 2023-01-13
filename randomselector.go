@@ -27,10 +27,10 @@ func CreateRandomBox(maxRate int, returnSelectedItems bool, contents ...RandomCo
 	var randomBag *RandomBag = &RandomBag{}
 	randomBag.contents = contents
 	randomBag.totalItemRates = randomBag.initRates()
-	randomBag.presetMaxRate = maxRate
+	randomBag.configMaxRate = maxRate
 
-	if randomBag.presetMaxRate > RandomRateNone {
-		randomBag.maxRate = randomBag.presetMaxRate
+	if randomBag.configMaxRate > RandomRateNone {
+		randomBag.maxRate = randomBag.configMaxRate
 	} else {
 		randomBag.maxRate = randomBag.totalItemRates
 	}

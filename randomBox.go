@@ -53,13 +53,13 @@ type RandomSelectable interface {
 type RandomBag struct {
 	contents []RandomContent
 
-	//presetMaxRate is the preset max rate of this bag
-	presetMaxRate int
+	//configMaxRate is the preset max rate of this bag. Maybe not the effective rate used when random, see [RandomBag.maxRate]
+	configMaxRate int
 
-	//maxRate is the maximum value of random (exclusive)
+	//maxRate is the effective maximum value of random (exclusive)
 	maxRate int
 
-	//totalItemRates is the maximum rates that selecting has a valid result
+	//totalItemRates is the maximum rates that selecting has a valid result. It equals the sum of all items
 	totalItemRates int
 
 	//accRates stores rates of [contents] in continuous list. [accRates] is correspondence to [contents],
@@ -105,6 +105,16 @@ func (bag *RandomBag) GetMaxRate() int {
 	return bag.maxRate
 }
 
+// GetConfigMaxRate return max values configured
+func (bag *RandomBag) GetConfigMaxRate() int {
+	return bag.configMaxRate
+}
+
+// GetTotalItemRates return sum of all item rates
+func (bag *RandomBag) GetTotalItemRates() int {
+	return bag.totalItemRates
+}
+
 // initRates prepares cached values for picking
 func (bag *RandomBag) initRates() int {
 	bag.accRates = make([]int, len(bag.contents))
@@ -118,8 +128,8 @@ func (bag *RandomBag) initRates() int {
 }
 
 func (bag *RandomBag) updateMaxRates() {
-	if bag.presetMaxRate > RandomRateNone {
-		bag.maxRate = bag.presetMaxRate
+	if bag.configMaxRate > RandomRateNone {
+		bag.maxRate = bag.configMaxRate
 	} else {
 		bag.maxRate = bag.totalItemRates
 	}
@@ -136,7 +146,7 @@ func (bag *RandomBag) String() string {
 	buffer.WriteString("|ReturnSelectedItems:")
 	buffer.WriteString(fmt.Sprintf("%v", bag.returnSelectedItems))
 	buffer.WriteString("|PresetMaxRate:")
-	buffer.WriteString(fmt.Sprintf("%v", bag.presetMaxRate))
+	buffer.WriteString(fmt.Sprintf("%v", bag.configMaxRate))
 	buffer.WriteString("|CurrentMaxRate:")
 	buffer.WriteString(fmt.Sprintf("%v", bag.maxRate))
 	buffer.WriteString("|Contents:")

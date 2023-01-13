@@ -182,7 +182,7 @@ func TestAddItemToBag_Correct(t *testing.T) {
 		Rate:  2,
 	}
 	bag := RandomBag{
-		presetMaxRate:       RandomRateNone,
+		configMaxRate:       RandomRateNone,
 		returnSelectedItems: true,
 	}
 
