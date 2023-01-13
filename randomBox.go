@@ -166,6 +166,6 @@ func (bag *RandomBag) AddItem(item RandomItemInterface) {
 	bag.updateMaxRates()
 
 	if log.IsLevelEnabled(log.TraceLevel) {
-		log.Tracef("RandomBox.AddItem: newItem=%v, rate=%v, maxRate=%v, bag=%v", item.GetName(), item.GetRate(), bag.GetMaxRate(), bag.String())
+		log.Tracef("RandomBox.AddItem: newItem=%v, rate=%v, maxRate=%v, items=%v, totalItemRate=%v", item.GetName(), item.GetRate(), bag.GetMaxRate(), len(bag.contents), bag.totalItemRates)
 	}
 }
