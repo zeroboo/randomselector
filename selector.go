@@ -52,8 +52,8 @@ func NewRandomBoxNoFailureFromItems(hasReplacement bool, items ...RandomItemInte
 	contents := make([]RandomContent, len(items))
 	for i := 0; i < len(items); i++ {
 		contents[i] = RandomContent{
-			Content: items[i],
-			Rate:    items[i].GetRate(),
+			content: items[i],
+			rate:    items[i].GetRate(),
 		}
 	}
 	return NewRandomBag(RandomRateNone, hasReplacement, contents...)

@@ -48,7 +48,7 @@ func (bag *RandomBag) SelectRandom() any {
 	rate := rand.Intn(bag.maxRate)
 	for i := 0; i < len(bag.accRates); i++ {
 		if rate < bag.accRates[i] {
-			return bag.contents[i].Content
+			return bag.contents[i].content
 		}
 	}
 	return nil
@@ -79,7 +79,7 @@ func (bag *RandomBag) initRates() int {
 	bag.accRates = make([]int, len(bag.contents))
 	totalAccRate := 0
 	for i := 0; i < len(bag.contents); i++ {
-		totalAccRate += bag.contents[i].Rate
+		totalAccRate += bag.contents[i].rate
 		bag.accRates[i] = totalAccRate
 	}
 	bag.updateMaxRates()
@@ -115,9 +115,9 @@ func (bag *RandomBag) String() string {
 
 func (bag *RandomBag) AddItem(item RandomItemInterface) {
 	newContent := RandomContent{
-		Content: item,
-		Rate:    item.GetRate(),
-		Name:    item.GetName(),
+		content: item,
+		rate:    item.GetRate(),
+		name:    item.GetName(),
 	}
 	bag.contents = append(bag.contents, newContent)
 	bag.totalItemRates = bag.initRates()

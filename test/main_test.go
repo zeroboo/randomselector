@@ -39,23 +39,12 @@ func TestRandomBagCreating_Correct(t *testing.T) {
 // Full rate means box has no chance of missing in selecting
 // go test -timeout 30s -run ^TestRandomBag_SelectingFullRate_NoNilResult$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
-	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true, randomselector.RandomContent{
-		Name:    "1",
-		Content: "string 1",
-		Rate:    100,
-	}, randomselector.RandomContent{
-		Name:    "2",
-		Content: "string 2",
-		Rate:    200,
-	}, randomselector.RandomContent{
-		Name:    "3",
-		Content: "string 3",
-		Rate:    300,
-	}, randomselector.RandomContent{
-		Name:    "4",
-		Content: "string 4",
-		Rate:    400,
-	})
+	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true,
+		*randomselector.NewRandomContent("1", 100, "string 1"),
+		*randomselector.NewRandomContent("2", 200, "string 2"),
+		*randomselector.NewRandomContent("3", 300, "string 3"),
+		*randomselector.NewRandomContent("4", 400, "string 5"),
+	)
 
 	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
 	assert.Equal(t, 4, len(randomBox.GetContents()), "Correct content size")
@@ -71,35 +60,12 @@ func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
 // TestRandomBag_SelectingFullRateWithStruct_NoNilResult: test box full rate with content is a struct
 // go test -timeout 30s -run ^TestRandomBag_SelectingFullRateWithStruct_NoNilResult$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
-	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true, randomselector.RandomContent{
-		Name: "1",
-		Content: TestRandomItem{
-			ID:    "item1",
-			Value: 1,
-		},
-		Rate: 100,
-	}, randomselector.RandomContent{
-		Name: "2",
-		Content: TestRandomItem{
-			ID:    "item2",
-			Value: 2,
-		},
-		Rate: 200,
-	}, randomselector.RandomContent{
-		Name: "3",
-		Content: TestRandomItem{
-			ID:    "item3",
-			Value: 3,
-		},
-		Rate: 300,
-	}, randomselector.RandomContent{
-		Name: "4",
-		Content: TestRandomItem{
-			ID:    "item4",
-			Value: 4,
-		},
-		Rate: 400,
-	})
+	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true,
+		*randomselector.NewRandomContent("1", 100, TestRandomItem{ID: "item1", Value: 1}),
+		*randomselector.NewRandomContent("2", 200, TestRandomItem{ID: "item2", Value: 2}),
+		*randomselector.NewRandomContent("3", 300, TestRandomItem{ID: "item3", Value: 3}),
+		*randomselector.NewRandomContent("4", 400, TestRandomItem{ID: "item4", Value: 4}),
+	)
 
 	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
 	assert.Equal(t, 4, len(randomBox.GetContents()), "Correct content size")
@@ -116,21 +82,11 @@ func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
 // TestRandomBag_SelectedNil_Correct: test box full rate with content is a struct
 // go test -timeout 30s -run ^TestRandomBag_SelectedNil_Correct$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectedNil_Correct(t *testing.T) {
-	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true, randomselector.RandomContent{
-		Name: "1",
-		Content: TestRandomItem{
-			ID:    "item1",
-			Value: 1,
-		},
-		Rate: 0,
-	}, randomselector.RandomContent{
-		Name: "2",
-		Content: TestRandomItem{
-			ID:    "item2",
-			Value: 2,
-		},
-		Rate: 0,
-	})
+	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000,
+		true,
+		*randomselector.NewRandomContent("1", 0, TestRandomItem{ID: "item1", Value: 2, Rate: 0}),
+		*randomselector.NewRandomContent("1", 0, TestRandomItem{ID: "item2", Value: 2, Rate: 0}),
+	)
 
 	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
 	assert.Equal(t, 2, len(randomBox.GetContents()), "Correct content size")
