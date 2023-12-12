@@ -12,7 +12,7 @@ func init() {
 
 const RandomRateNone int = -1
 
-// CreateRandomBox returns a random bag with config:
+// NewRandomBag returns a random bag with config:
 //
 // - maxRate: maximum value of random rate. If maxRate <= RandomRateNone, maxRate will be calculated as the sum of rate of all items
 //
@@ -23,7 +23,7 @@ const RandomRateNone int = -1
 //   - false means picked items will be removed from next random
 //
 // - contents: are items to be randomized in random bag
-func CreateRandomBox(maxRate int, returnSelectedItems bool, contents ...RandomContent) *RandomBag {
+func NewRandomBag(maxRate int, returnSelectedItems bool, contents ...RandomContent) *RandomBag {
 	var randomBag *RandomBag = &RandomBag{}
 	randomBag.contents = contents
 	randomBag.totalItemRates = randomBag.initRates()
@@ -39,16 +39,16 @@ func CreateRandomBox(maxRate int, returnSelectedItems bool, contents ...RandomCo
 	return randomBag
 }
 
-// CreateRandomBoxNoFailure return a random box with
+// NewRandomBagNoFailure return a random box which:
 //
-//   - Items have equal rates
+//   - All inside items have equal rates
 //
 //   - Every selecting returns an item (no chance of failure) if the bag has item
-func CreateRandomBoxNoFailure(hasReplacement bool, contents ...RandomContent) *RandomBag {
-	return CreateRandomBox(RandomRateNone, hasReplacement, contents...)
+func NewRandomBagNoFailure(hasReplacement bool, contents ...RandomContent) *RandomBag {
+	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
 }
 
-func CreateRandomBoxNoFailureFromItems(hasReplacement bool, items ...RandomItemInterface) *RandomBag {
+func NewRandomBoxNoFailureFromItems(hasReplacement bool, items ...RandomItemInterface) *RandomBag {
 	contents := make([]RandomContent, len(items))
 	for i := 0; i < len(items); i++ {
 		contents[i] = RandomContent{
@@ -56,9 +56,9 @@ func CreateRandomBoxNoFailureFromItems(hasReplacement bool, items ...RandomItemI
 			Rate:    items[i].GetRate(),
 		}
 	}
-	return CreateRandomBox(RandomRateNone, hasReplacement, contents...)
+	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
 }
 
-func CreateEmptyRandomBox(maxRate int, hasReplacement bool) *RandomBag {
-	return CreateRandomBox(maxRate, hasReplacement)
+func NewEmptyRandomBag(maxRate int, hasReplacement bool) *RandomBag {
+	return NewRandomBag(maxRate, hasReplacement)
 }

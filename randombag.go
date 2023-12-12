@@ -8,47 +8,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type RandomItemInterface interface {
-	GetRate() int
-	GetName() string
-}
-
-// RandomContent contains target of random picking and rates
-type RandomContent struct {
-	//Content is object to be randomly selected
-	Content any
-
-	//Rate tells how often this content will appear
-	//
-	//Zero means this content will never appear. Negative values are ERRONEOUS
-	Rate int
-
-	//Name is name of content
-	Name string
-}
-
-func (content RandomContent) GetRate() int {
-	return content.Rate
-}
-
-func (content RandomContent) GetName() string {
-	return content.Name
-}
-
-// RandomSelectable can return a randomly object inside
-type RandomSelectable interface {
-	//SelectRandom Randomly returns an object. Nil is a possible result, it means selected nothing
-	//
-	//Rates is random in [0, GetMaxRate())
-	SelectRandom() any
-
-	//GetContents returns all possible option of box
-	GetContents() []RandomContent
-
-	//GetMaxRate return max values (exclusive in random rates)
-	GetMaxRate() int
-}
-
 // RandomBag return object randomly with replacement (each selecting is independent)
 type RandomBag struct {
 	contents []RandomContent

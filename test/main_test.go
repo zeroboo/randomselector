@@ -1,48 +1,35 @@
-package randomselector
+package test
 
 import (
 	"fmt"
 	"os"
 	"testing"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"github.com/zeroboo/randomselector"
 )
 
 func TestMain(m *testing.M) {
-	log.Println("Test randomselector main function")
-	log.SetFormatter(&log.TextFormatter{
+	logrus.Println("Test randomselector main function")
+	logrus.SetFormatter(&logrus.TextFormatter{
 		DisableQuote: true,
 	})
-	log.SetOutput(os.Stdout)
-	log.SetLevel(log.TraceLevel)
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.TraceLevel)
 
 	exitCode := m.Run()
 
 	os.Exit(exitCode)
 }
 
-// go test -timeout 30s -run ^TestRandomPick$ github.com/zeroboo/randomselector -v
-func TestRandomPick(t *testing.T) {
-	log.Printf("HelloWorld")
-	assert.Equal(t, "Hello", "Hello", "")
-}
-
-// go test -timeout 30s -run ^TestRandomBagCreating_Correct$ github.com/zeroboo/randomselector -v
+// go test -timeout 30s -run ^TestRandomBagCreating_Correct$ github.com/zeroboo/randomselector/test -v
 func TestRandomBagCreating_Correct(t *testing.T) {
-	var randomBox *RandomBag = CreateRandomBox(1235, true, RandomContent{
-		Name:    "1",
-		Content: "string 1",
-		Rate:    100,
-	}, RandomContent{
-		Name:    "2",
-		Content: "string 2",
-		Rate:    200,
-	}, RandomContent{
-		Name:    "3",
-		Content: "string 3",
-		Rate:    300,
-	})
+	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1235, true,
+		*randomselector.NewRandomContent("1", 100, "string 1"),
+		*randomselector.NewRandomContent("2", 200, "string 2"),
+		*randomselector.NewRandomContent("3", 300, "string 3"),
+	)
 
 	assert.Equal(t, 1235, randomBox.GetMaxRate(), "Correct max rate")
 	assert.Equal(t, 3, len(randomBox.GetContents()), "Correct content size")
@@ -50,21 +37,21 @@ func TestRandomBagCreating_Correct(t *testing.T) {
 }
 
 // Full rate means box has no chance of missing in selecting
-// go test -timeout 30s -run ^TestRandomBag_SelectingFullRate_NoNilResult$ github.com/zeroboo/randomselector -v
+// go test -timeout 30s -run ^TestRandomBag_SelectingFullRate_NoNilResult$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
-	var randomBox *RandomBag = CreateRandomBox(1000, true, RandomContent{
+	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true, randomselector.RandomContent{
 		Name:    "1",
 		Content: "string 1",
 		Rate:    100,
-	}, RandomContent{
+	}, randomselector.RandomContent{
 		Name:    "2",
 		Content: "string 2",
 		Rate:    200,
-	}, RandomContent{
+	}, randomselector.RandomContent{
 		Name:    "3",
 		Content: "string 3",
 		Rate:    300,
-	}, RandomContent{
+	}, randomselector.RandomContent{
 		Name:    "4",
 		Content: "string 4",
 		Rate:    400,
@@ -75,53 +62,39 @@ func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
 	assert.Equal(t, "[100 300 600 1000]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
 		selectedValue := randomBox.SelectRandom()
-		log.Printf("Selected values: %v", selectedValue)
+		logrus.Printf("Selected values: %v", selectedValue)
 		assert.NotEqual(t, nil, selectedValue, "Selected value must not be nil")
 	}
 
 }
 
-type TestItem struct {
-	ID    string
-	Value int
-	Rate  int
-}
-
-func (content TestItem) GetRate() int {
-	return content.Rate
-}
-
-func (content TestItem) GetName() string {
-	return content.ID
-}
-
 // TestRandomBag_SelectingFullRateWithStruct_NoNilResult: test box full rate with content is a struct
-// go test -timeout 30s -run ^TestRandomBag_SelectingFullRateWithStruct_NoNilResult$ github.com/zeroboo/randomselector -v
+// go test -timeout 30s -run ^TestRandomBag_SelectingFullRateWithStruct_NoNilResult$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
-	var randomBox *RandomBag = CreateRandomBox(1000, true, RandomContent{
+	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true, randomselector.RandomContent{
 		Name: "1",
-		Content: TestItem{
+		Content: TestRandomItem{
 			ID:    "item1",
 			Value: 1,
 		},
 		Rate: 100,
-	}, RandomContent{
+	}, randomselector.RandomContent{
 		Name: "2",
-		Content: TestItem{
+		Content: TestRandomItem{
 			ID:    "item2",
 			Value: 2,
 		},
 		Rate: 200,
-	}, RandomContent{
+	}, randomselector.RandomContent{
 		Name: "3",
-		Content: TestItem{
+		Content: TestRandomItem{
 			ID:    "item3",
 			Value: 3,
 		},
 		Rate: 300,
-	}, RandomContent{
+	}, randomselector.RandomContent{
 		Name: "4",
-		Content: TestItem{
+		Content: TestRandomItem{
 			ID:    "item4",
 			Value: 4,
 		},
@@ -133,26 +106,26 @@ func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
 	assert.Equal(t, "[100 300 600 1000]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
 		selectedValue := randomBox.SelectRandom()
-		log.Printf("Selected values: %v", selectedValue)
+		logrus.Printf("Selected values: %v", selectedValue)
 		assert.NotEqual(t, nil, selectedValue, "Selected value must not be nil")
-		assert.IsType(t, TestItem{}, selectedValue, "Correct selected type")
+		assert.IsType(t, TestRandomItem{}, selectedValue, "Correct selected type")
 	}
 
 }
 
 // TestRandomBag_SelectedNil_Correct: test box full rate with content is a struct
-// go test -timeout 30s -run ^TestRandomBag_SelectedNil_Correct$ github.com/zeroboo/randomselector -v
+// go test -timeout 30s -run ^TestRandomBag_SelectedNil_Correct$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectedNil_Correct(t *testing.T) {
-	var randomBox *RandomBag = CreateRandomBox(1000, true, RandomContent{
+	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true, randomselector.RandomContent{
 		Name: "1",
-		Content: TestItem{
+		Content: TestRandomItem{
 			ID:    "item1",
 			Value: 1,
 		},
 		Rate: 0,
-	}, RandomContent{
+	}, randomselector.RandomContent{
 		Name: "2",
-		Content: TestItem{
+		Content: TestRandomItem{
 			ID:    "item2",
 			Value: 2,
 		},
@@ -164,33 +137,30 @@ func TestRandomBag_SelectedNil_Correct(t *testing.T) {
 	assert.Equal(t, "[0 0]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
 		selectedValue := randomBox.SelectRandom()
-		log.Printf("Selected values: %v", selectedValue)
+		logrus.Printf("Selected values: %v", selectedValue)
 		assert.Equal(t, nil, selectedValue, "Selected value must be nil")
 	}
 }
 
-// go test -timeout 30s -run ^TestAddItemToBag_Correct$ github.com/zeroboo/randomselector -v
+// go test -timeout 30s -run ^TestAddItemToBag_Correct$ github.com/zeroboo/randomselector/test -v
 func TestAddItemToBag_Correct(t *testing.T) {
-	item1 := TestItem{
+	item1 := TestRandomItem{
 		ID:    "item1",
 		Value: 1,
 		Rate:  1,
 	}
-	item2 := TestItem{
+	item2 := TestRandomItem{
 		ID:    "item2",
 		Value: 2,
 		Rate:  2,
 	}
-	bag := RandomBag{
-		configMaxRate:       RandomRateNone,
-		returnSelectedItems: true,
-	}
+	bag := randomselector.NewRandomBag(randomselector.RandomRateNone, true)
 
 	bag.AddItem(item1)
 	bag.AddItem(item2)
 	bag.AddItem(item2)
 
-	log.Infof("Bag: %v", bag.String())
+	logrus.Infof("Bag: %v", bag.String())
 	assert.Equal(t, 5, bag.GetMaxRate(), "Correct max rates")
-	assert.Equal(t, 3, len(bag.contents), "Correct item counts")
+	assert.Equal(t, 3, len(bag.GetContents()), "Correct item counts")
 }
