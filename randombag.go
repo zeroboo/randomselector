@@ -116,7 +116,7 @@ func (bag *RandomBag) String() string {
 	return buffer.String()
 }
 
-func (bag *RandomBag) AddItem(item IRandomitem) {
+func (bag *RandomBag) AddItem(item IRandomItem) {
 	newContent := RandomContent{
 		content: item,
 		rate:    item.GetRate(),

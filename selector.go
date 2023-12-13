@@ -48,7 +48,7 @@ func NewRandomBagNoFailure(hasReplacement bool, contents ...RandomContent) *Rand
 	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
 }
 
-func NewRandomBoxNoFailureFromItems(hasReplacement bool, items ...IRandomitem) *RandomBag {
+func NewRandomBoxNoFailureFromItems(hasReplacement bool, items ...IRandomItem) *RandomBag {
 	contents := make([]RandomContent, len(items))
 	for i := 0; i < len(items); i++ {
 		contents[i] = RandomContent{
