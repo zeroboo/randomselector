@@ -1,6 +1,6 @@
 package randomselector
 
-type RandomItemInterface interface {
+type IRandomitem interface {
 	GetRate() int
 	GetName() string
 	GetContent() any

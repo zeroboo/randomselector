@@ -40,18 +40,21 @@ type RandomBag struct {
 
 // Select returns an object randomly with replacement.
 // Nil result means nothing selected
-func (bag *RandomBag) SelectRandom() any {
+func (bag *RandomBag) SelectRandom() (any, error) {
 	if bag.accRates == nil {
 		bag.initRates()
 	}
 
+	if bag.maxRate <= 0 {
+		return nil, fmt.Errorf("invalid max rate %v", bag.maxRate)
+	}
 	rate := rand.Intn(bag.maxRate)
 	for i := 0; i < len(bag.accRates); i++ {
 		if rate < bag.accRates[i] {
-			return bag.contents[i].content
+			return bag.contents[i].content, nil
 		}
 	}
-	return nil
+	return nil, nil
 }
 
 // GetContents returns all possible option of box
@@ -113,7 +116,7 @@ func (bag *RandomBag) String() string {
 	return buffer.String()
 }
 
-func (bag *RandomBag) AddItem(item RandomItemInterface) {
+func (bag *RandomBag) AddItem(item IRandomitem) {
 	newContent := RandomContent{
 		content: item,
 		rate:    item.GetRate(),

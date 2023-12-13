@@ -1,4 +1,9 @@
-Deploy script:
+## Test
+
+go test github.com/zeroboo/randomselector/test -v
+
+## Deploy script
+
 ```console
 ```
 

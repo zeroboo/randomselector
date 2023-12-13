@@ -13,3 +13,7 @@ func (content TestRandomItem) GetRate() int {
 func (content TestRandomItem) GetName() string {
 	return content.ID
 }
+
+func (content TestRandomItem) GetContent() any {
+	return content.ID
+}
