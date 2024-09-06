@@ -24,3 +24,4 @@ git push $VERSION
 SET GOPROXY=proxy.golang.org 
 go list -m github.com/zeroboo/randomselector@$VERSION
 ```
+

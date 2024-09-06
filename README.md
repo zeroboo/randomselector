@@ -3,7 +3,10 @@
 # randomselector
 
 Randomly select objects in golang
-Current version: v0.0.2
+Current version: v1.0.0
+Features:
+- Randomly select objects 
+- Randomly select objects with weights
 
 ## Install
 
@@ -37,15 +40,3 @@ func main() {
 }
 
 
-```
-## Test
-
-```console
-go test -timeout 60s github.com/zeroboo/randomselector/test -v
-```
-
-## Publish
-
-```console
-.\publish.ps1
-```
