@@ -23,6 +23,16 @@ func SelectValues(values ...any) (any, error) {
 	return values[index], nil
 }
 
+func SelectSliceValues[T int | int64 | float32 | float64 | string | any](values []T) (T, error) {
+	var ret T
+	if len(values) == 0 {
+		return ret, errors.New("no value to select")
+	}
+	index := rand.Intn(len(values))
+	ret = values[index]
+	return ret, nil
+}
+
 type WeightValue struct {
 	Value  any
 	Weight float64

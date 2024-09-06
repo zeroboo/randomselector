@@ -121,3 +121,9 @@ func TestSelector_ZeroWeight_Correct(t *testing.T) {
 		assert.Nil(t, err, "No error")
 	}
 }
+
+func TestSelectValues_SelectSlice(t *testing.T) {
+	randomselector.SelectSliceValues([]int{1, 2, 3})
+	randomselector.SelectSliceValues([]string{"1", "", ""})
+	randomselector.SelectSliceValues([]TestRandomItem{TestRandomItem{ID: "1"}})
+}
