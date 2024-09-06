@@ -5,18 +5,12 @@ import (
 	"os"
 	"testing"
 
-	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/zeroboo/randomselector/randombag"
 )
 
 func TestMain(m *testing.M) {
-	logrus.Println("Test randomselector main function")
-	logrus.SetFormatter(&logrus.TextFormatter{
-		DisableQuote: true,
-	})
-	logrus.SetOutput(os.Stdout)
-	logrus.SetLevel(logrus.TraceLevel)
+	fmt.Println("Test randomselector main function")
 
 	exitCode := m.Run()
 
@@ -31,7 +25,7 @@ func TestRandomBagCreating_Correct(t *testing.T) {
 		*randombag.NewRandomContent("3", 300, "string 3"),
 	)
 
-	assert.Equal(t, 1235, randomBox.GetMaxRate(), "Correct max rate")
+	assert.Equal(t, int64(1235), randomBox.GetMaxRate(), "Correct max rate")
 	assert.Equal(t, 3, len(randomBox.GetContents()), "Correct content size")
 	assert.Equal(t, "[100 300 600]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 }
@@ -46,12 +40,12 @@ func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
 		*randombag.NewRandomContent("4", 400, "string 5"),
 	)
 
-	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
+	assert.Equal(t, int64(1000), randomBox.GetMaxRate(), "Correct max rate")
 	assert.Equal(t, 4, len(randomBox.GetContents()), "Correct content size")
 	assert.Equal(t, "[100 300 600 1000]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
 		selectedValue, _ := randomBox.SelectRandom()
-		logrus.Printf("Selected values: %v", selectedValue)
+		t.Logf("Selected values: %v", selectedValue)
 		assert.NotEqual(t, nil, selectedValue, "Selected value must not be nil")
 	}
 
@@ -67,12 +61,12 @@ func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
 		*randombag.NewRandomContent("4", 400, TestRandomItem{ID: "item4", Value: 4}),
 	)
 
-	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
+	assert.Equal(t, int64(1000), randomBox.GetMaxRate(), "Correct max rate")
 	assert.Equal(t, 4, len(randomBox.GetContents()), "Correct content size")
 	assert.Equal(t, "[100 300 600 1000]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
 		selectedValue, _ := randomBox.SelectRandom()
-		logrus.Printf("Selected values: %v", selectedValue)
+		t.Logf("Selected values: %v", selectedValue)
 		assert.NotEqual(t, nil, selectedValue, "Selected value must not be nil")
 		assert.IsType(t, TestRandomItem{}, selectedValue, "Correct selected type")
 	}
@@ -88,12 +82,12 @@ func TestRandomBag_SelectedNil_Correct(t *testing.T) {
 		*randombag.NewRandomContent("1", 0, TestRandomItem{ID: "item2", Value: 2, Rate: 0}),
 	)
 
-	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
+	assert.Equal(t, int64(1000), randomBox.GetMaxRate(), "Correct max rate")
 	assert.Equal(t, 2, len(randomBox.GetContents()), "Correct content size")
 	assert.Equal(t, "[0 0]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
 		selectedValue, _ := randomBox.SelectRandom()
-		logrus.Printf("Selected values: %v", selectedValue)
+		t.Logf("Selected values: %v", selectedValue)
 		assert.Equal(t, nil, selectedValue, "Selected value must be nil")
 	}
 }
@@ -116,7 +110,7 @@ func TestAddItemToBag_Correct(t *testing.T) {
 	bag.AddItem(item2)
 	bag.AddItem(item2)
 
-	logrus.Infof("Bag: %v", bag.String())
-	assert.Equal(t, 5, bag.GetMaxRate(), "Correct max rates")
+	t.Logf("Bag: %v", bag.String())
+	assert.Equal(t, int64(5), bag.GetMaxRate(), "Correct max rates")
 	assert.Equal(t, 3, len(bag.GetContents()), "Correct item counts")
 }
