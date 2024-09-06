@@ -7,7 +7,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"github.com/zeroboo/randomselector"
+	"github.com/zeroboo/randomselector/randombag"
 )
 
 func TestMain(m *testing.M) {
@@ -25,10 +25,10 @@ func TestMain(m *testing.M) {
 
 // go test -timeout 30s -run ^TestRandomBagCreating_Correct$ github.com/zeroboo/randomselector/test -v
 func TestRandomBagCreating_Correct(t *testing.T) {
-	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1235, true,
-		*randomselector.NewRandomContent("1", 100, "string 1"),
-		*randomselector.NewRandomContent("2", 200, "string 2"),
-		*randomselector.NewRandomContent("3", 300, "string 3"),
+	var randomBox *randombag.RandomBag = randombag.NewRandomBag(1235, true,
+		*randombag.NewRandomContent("1", 100, "string 1"),
+		*randombag.NewRandomContent("2", 200, "string 2"),
+		*randombag.NewRandomContent("3", 300, "string 3"),
 	)
 
 	assert.Equal(t, 1235, randomBox.GetMaxRate(), "Correct max rate")
@@ -39,11 +39,11 @@ func TestRandomBagCreating_Correct(t *testing.T) {
 // Full rate means box has no chance of missing in selecting
 // go test -timeout 30s -run ^TestRandomBag_SelectingFullRate_NoNilResult$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
-	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true,
-		*randomselector.NewRandomContent("1", 100, "string 1"),
-		*randomselector.NewRandomContent("2", 200, "string 2"),
-		*randomselector.NewRandomContent("3", 300, "string 3"),
-		*randomselector.NewRandomContent("4", 400, "string 5"),
+	var randomBox *randombag.RandomBag = randombag.NewRandomBag(1000, true,
+		*randombag.NewRandomContent("1", 100, "string 1"),
+		*randombag.NewRandomContent("2", 200, "string 2"),
+		*randombag.NewRandomContent("3", 300, "string 3"),
+		*randombag.NewRandomContent("4", 400, "string 5"),
 	)
 
 	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
@@ -60,11 +60,11 @@ func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
 // TestRandomBag_SelectingFullRateWithStruct_NoNilResult: test box full rate with content is a struct
 // go test -timeout 30s -run ^TestRandomBag_SelectingFullRateWithStruct_NoNilResult$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
-	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000, true,
-		*randomselector.NewRandomContent("1", 100, TestRandomItem{ID: "item1", Value: 1}),
-		*randomselector.NewRandomContent("2", 200, TestRandomItem{ID: "item2", Value: 2}),
-		*randomselector.NewRandomContent("3", 300, TestRandomItem{ID: "item3", Value: 3}),
-		*randomselector.NewRandomContent("4", 400, TestRandomItem{ID: "item4", Value: 4}),
+	var randomBox *randombag.RandomBag = randombag.NewRandomBag(1000, true,
+		*randombag.NewRandomContent("1", 100, TestRandomItem{ID: "item1", Value: 1}),
+		*randombag.NewRandomContent("2", 200, TestRandomItem{ID: "item2", Value: 2}),
+		*randombag.NewRandomContent("3", 300, TestRandomItem{ID: "item3", Value: 3}),
+		*randombag.NewRandomContent("4", 400, TestRandomItem{ID: "item4", Value: 4}),
 	)
 
 	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
@@ -82,10 +82,10 @@ func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
 // TestRandomBag_SelectedNil_Correct: test box full rate with content is a struct
 // go test -timeout 30s -run ^TestRandomBag_SelectedNil_Correct$ github.com/zeroboo/randomselector/test -v
 func TestRandomBag_SelectedNil_Correct(t *testing.T) {
-	var randomBox *randomselector.RandomBag = randomselector.NewRandomBag(1000,
+	var randomBox *randombag.RandomBag = randombag.NewRandomBag(1000,
 		true,
-		*randomselector.NewRandomContent("1", 0, TestRandomItem{ID: "item1", Value: 2, Rate: 0}),
-		*randomselector.NewRandomContent("1", 0, TestRandomItem{ID: "item2", Value: 2, Rate: 0}),
+		*randombag.NewRandomContent("1", 0, TestRandomItem{ID: "item1", Value: 2, Rate: 0}),
+		*randombag.NewRandomContent("1", 0, TestRandomItem{ID: "item2", Value: 2, Rate: 0}),
 	)
 
 	assert.Equal(t, 1000, randomBox.GetMaxRate(), "Correct max rate")
@@ -110,7 +110,7 @@ func TestAddItemToBag_Correct(t *testing.T) {
 		Value: 2,
 		Rate:  2,
 	}
-	bag := randomselector.NewRandomBag(randomselector.RandomRateNone, true)
+	bag := randombag.NewRandomBag(randombag.RandomRateNone, true)
 
 	bag.AddItem(item1)
 	bag.AddItem(item2)

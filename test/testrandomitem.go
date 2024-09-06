@@ -3,10 +3,10 @@ package test
 type TestRandomItem struct {
 	ID    string
 	Value int
-	Rate  int
+	Rate  int64
 }
 
-func (content TestRandomItem) GetRate() int {
+func (content TestRandomItem) GetRate() int64 {
 	return content.Rate
 }
 

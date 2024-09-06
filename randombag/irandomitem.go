@@ -1,7 +1,7 @@
-package randomselector
+package randombag
 
 type IRandomItem interface {
-	GetRate() int
+	GetRate() int64
 	GetName() string
 	GetContent() any
 }

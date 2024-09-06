@@ -1,18 +1,3 @@
-![Coverage](https://img.shields.io/badge/Coverage-66.7%25-yellow)
-
-# randomselector
-
-Randomly select objects in golang
-Current version: v0.0.2
-
-## Install
-
-```console
-go get  github.com/zeroboo/randomselector
-```
-
-## Usage 
-```golang
 package main
 
 import (
@@ -22,7 +7,7 @@ import (
 )
 
 func main() {
-	
+
 	//Select values randomly with equally rate for each value, 1/3 chance for each value
 	value, errSelect := randomselector.SelectValues("1", "2", "3")
 	fmt.Println("Select values: ", value, errSelect)
@@ -35,17 +20,3 @@ func main() {
 	fmt.Println("Select weight value: ", weightValue, errSelect)
 
 }
-
-
-```
-## Test
-
-```console
-go test -timeout 60s github.com/zeroboo/randomselector/test -v
-```
-
-## Publish
-
-```console
-.\publish.ps1
-```

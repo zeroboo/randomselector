@@ -1,64 +1,76 @@
 package randomselector
 
 import (
+	"errors"
+	"fmt"
 	"math/rand"
-	"time"
 )
 
 func init() {
-	var seed int64 = time.Now().UnixNano()
-	rand.Seed(seed)
+
 }
 
-const RandomRateNone int = -1
-
-// NewRandomBag returns a random bag with config:
+// Selects values randomly with equally rate for each value
 //
-// - maxRate: maximum value of random rate. If maxRate <= RandomRateNone, maxRate will be calculated as the sum of rate of all items
-//
-// - replacement: picked items have chance to appear in next random or not
-//
-//   - true means picked items will have chance to appear in next random
-//
-//   - false means picked items will be removed from next random
-//
-// - contents: are items to be randomized in random bag
-func NewRandomBag(maxRate int, returnSelectedItems bool, contents ...RandomContent) *RandomBag {
-	var randomBag *RandomBag = &RandomBag{}
-	randomBag.contents = contents
-	randomBag.totalItemRates = randomBag.initRates()
-	randomBag.configMaxRate = maxRate
-
-	if randomBag.configMaxRate > RandomRateNone {
-		randomBag.maxRate = randomBag.configMaxRate
-	} else {
-		randomBag.maxRate = randomBag.totalItemRates
+// Return:
+//   - selected value if selecting is successful
+//   - error if any, nil if selecting is successful
+func SelectValues(values ...any) (any, error) {
+	if len(values) == 0 {
+		return nil, errors.New("no value to select")
 	}
-	randomBag.returnSelectedItems = returnSelectedItems
-
-	return randomBag
+	index := rand.Intn(len(values))
+	return values[index], nil
 }
 
-// NewRandomBagNoFailure return a random box which:
-//
-//   - All inside items have equal rates
-//
-//   - Every selecting returns an item (no chance of failure) if the bag has item
-func NewRandomBagNoFailure(hasReplacement bool, contents ...RandomContent) *RandomBag {
-	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
+type WeightValue struct {
+	Value  any
+	Weight float64
 }
 
-func NewRandomBoxNoFailureFromItems(hasReplacement bool, items ...IRandomItem) *RandomBag {
-	contents := make([]RandomContent, len(items))
-	for i := 0; i < len(items); i++ {
-		contents[i] = RandomContent{
-			content: items[i],
-			rate:    items[i].GetRate(),
+func makeAccRates(values []float64) []float64 {
+	accRate := float64(0)
+	result := make([]float64, len(values))
+	for i := 1; i < len(values); i++ {
+		accRate += values[i]
+		result[i] = accRate
+	}
+	return result
+}
+func randomIndex(accRates []float64) int {
+	r := rand.Float64()
+	for i, v := range accRates {
+		if r < v {
+			return i
 		}
 	}
-	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
+	return -1
 }
 
-func NewEmptyRandomBag(maxRate int, hasReplacement bool) *RandomBag {
-	return NewRandomBag(maxRate, hasReplacement)
+// Randomly selects one of weighted values
+//
+// Return:
+//   - selected value
+//   - error if any, nil if selecting is successful
+func SelectWithWeight(values ...WeightValue) (any, error) {
+	if len(values) == 0 {
+		return nil, errors.New("no value to select")
+	}
+
+	var maxWeight float64 = 0
+	var weights []float64 = make([]float64, len(values))
+	for i, v := range values {
+		if v.Weight < 0 {
+			return nil, fmt.Errorf("invalid weight %v at index %v", v.Weight, i)
+		}
+		maxWeight += v.Weight
+		weights[i] = v.Weight
+	}
+	accRates := makeAccRates(weights)
+	selectedIndex := randomIndex(accRates)
+	if selectedIndex < 0 {
+		return nil, fmt.Errorf("selected failed, index=%v", selectedIndex)
+	}
+
+	return values[selectedIndex].Value, nil
 }

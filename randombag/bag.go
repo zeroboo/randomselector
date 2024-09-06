@@ -1,4 +1,4 @@
-package randomselector
+package randombag
 
 import (
 	"bytes"
@@ -13,13 +13,13 @@ type RandomBag struct {
 	contents []RandomContent
 
 	//configMaxRate is the preset max rate of this bag. Maybe not the effective rate used when random, see [RandomBag.maxRate]
-	configMaxRate int
+	configMaxRate int64
 
 	//maxRate is the effective maximum value of random (exclusive)
-	maxRate int
+	maxRate int64
 
 	//totalItemRates is the maximum rates that selecting has a valid result. It equals the sum of all items
-	totalItemRates int
+	totalItemRates int64
 
 	//accRates stores rates of [contents] in continuous list. [accRates] is correspondence to [contents],
 	//It means accRates[i] stands for contents[i]
@@ -30,7 +30,7 @@ type RandomBag struct {
 	//  - with random rate 10->19, selected item is content[1]
 	//  - with random rate is 20->29, selected item is content[2]
 	//  - with random rate is >=30, selected item is nil
-	accRates []int
+	accRates []int64
 
 	//returnSelectedItems has replacement or not:
 	//  - if true, items after selecting will not be changed
@@ -48,7 +48,7 @@ func (bag *RandomBag) SelectRandom() (any, error) {
 	if bag.maxRate <= 0 {
 		return nil, fmt.Errorf("invalid max rate %v", bag.maxRate)
 	}
-	rate := rand.Intn(bag.maxRate)
+	rate := rand.Int63n(bag.maxRate)
 	for i := 0; i < len(bag.accRates); i++ {
 		if rate < bag.accRates[i] {
 			return bag.contents[i].content, nil
@@ -63,24 +63,24 @@ func (bag *RandomBag) GetContents() []RandomContent {
 }
 
 // GetMaxRate return max values (exclusive in random rates)
-func (bag *RandomBag) GetMaxRate() int {
+func (bag *RandomBag) GetMaxRate() int64 {
 	return bag.maxRate
 }
 
 // GetConfigMaxRate return max values configured
-func (bag *RandomBag) GetConfigMaxRate() int {
+func (bag *RandomBag) GetConfigMaxRate() int64 {
 	return bag.configMaxRate
 }
 
 // GetTotalItemRates return sum of all item rates
-func (bag *RandomBag) GetTotalItemRates() int {
+func (bag *RandomBag) GetTotalItemRates() int64 {
 	return bag.totalItemRates
 }
 
 // initRates prepares cached values for picking
-func (bag *RandomBag) initRates() int {
-	bag.accRates = make([]int, len(bag.contents))
-	totalAccRate := 0
+func (bag *RandomBag) initRates() int64 {
+	bag.accRates = make([]int64, len(bag.contents))
+	totalAccRate := int64(0)
 	for i := 0; i < len(bag.contents); i++ {
 		totalAccRate += bag.contents[i].rate
 		bag.accRates[i] = totalAccRate
@@ -98,7 +98,7 @@ func (bag *RandomBag) updateMaxRates() {
 }
 
 // GetAccRates return accRates
-func (bag *RandomBag) GetAccRates() []int {
+func (bag *RandomBag) GetAccRates() []int64 {
 	return bag.accRates
 }
 
@@ -130,4 +130,57 @@ func (bag *RandomBag) AddItem(item IRandomItem) {
 	if log.IsLevelEnabled(log.TraceLevel) {
 		log.Tracef("RandomBox.AddItem: newItem=%v, rate=%v, maxRate=%v, items=%v, totalItemRate=%v", item.GetName(), item.GetRate(), bag.GetMaxRate(), len(bag.contents), bag.totalItemRates)
 	}
+}
+
+const RandomRateNone int64 = -1
+
+// NewRandomBag returns a random bag with config:
+//
+// - maxRate: maximum value of random rate. If maxRate <= RandomRateNone, maxRate will be calculated as the sum of rate of all items
+//
+// - replacement: picked items have chance to appear in next random or not
+//
+//   - true means picked items will have chance to appear in next random
+//
+//   - false means picked items will be removed from next random
+//
+// - contents: are items to be randomized in random bag
+func NewRandomBag(maxRate int64, returnSelectedItems bool, contents ...RandomContent) *RandomBag {
+	var randomBag *RandomBag = &RandomBag{}
+	randomBag.contents = contents
+	randomBag.totalItemRates = randomBag.initRates()
+	randomBag.configMaxRate = maxRate
+
+	if randomBag.configMaxRate > RandomRateNone {
+		randomBag.maxRate = randomBag.configMaxRate
+	} else {
+		randomBag.maxRate = randomBag.totalItemRates
+	}
+	randomBag.returnSelectedItems = returnSelectedItems
+
+	return randomBag
+}
+
+// NewRandomBagNoFailure return a random box which:
+//
+//   - All inside items have equal rates
+//
+//   - Every selecting returns an item (no chance of failure) if the bag has item
+func NewRandomBagNoFailure(hasReplacement bool, contents ...RandomContent) *RandomBag {
+	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
+}
+
+func NewRandomBoxNoFailureFromItems(hasReplacement bool, items ...IRandomItem) *RandomBag {
+	contents := make([]RandomContent, len(items))
+	for i := 0; i < len(items); i++ {
+		contents[i] = RandomContent{
+			content: items[i],
+			rate:    items[i].GetRate(),
+		}
+	}
+	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
+}
+
+func NewEmptyRandomBag(maxRate int64, hasReplacement bool) *RandomBag {
+	return NewRandomBag(maxRate, hasReplacement)
 }
