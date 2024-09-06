@@ -1,4 +1,4 @@
-![Coverage](https://img.shields.io/badge/Coverage-66.7%25-yellow)
+![Coverage](https://img.shields.io/badge/Coverage-100.0%25-brightgreen)
 
 # randomselector
 
