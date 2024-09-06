@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zeroboo/randomselector/randombag"
+	"github.com/zeroboo/randomselector/sample"
 )
 
 func TestMain(m *testing.M) {
@@ -15,6 +16,11 @@ func TestMain(m *testing.M) {
 	exitCode := m.Run()
 
 	os.Exit(exitCode)
+}
+
+func TestSample_NoError(t *testing.T) {
+	fmt.Println("Test sample function")
+	sample.Sample()
 }
 
 // go test -timeout 30s -run ^TestRandomBagCreating_Correct$ github.com/zeroboo/randomselector/test -v
@@ -66,7 +72,7 @@ func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
 	assert.Equal(t, "[100 300 600 1000]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
 		selectedValue, _ := randomBox.SelectRandom()
-		t.Logf("Selected values: %v", selectedValue)
+		t.Logf("Selected values: %v %v", selectedValue, selectedValue.(TestRandomItem).GetContent())
 		assert.NotEqual(t, nil, selectedValue, "Selected value must not be nil")
 		assert.IsType(t, TestRandomItem{}, selectedValue, "Correct selected type")
 	}
@@ -113,4 +119,5 @@ func TestAddItemToBag_Correct(t *testing.T) {
 	t.Logf("Bag: %v", bag.String())
 	assert.Equal(t, int64(5), bag.GetMaxRate(), "Correct max rates")
 	assert.Equal(t, 3, len(bag.GetContents()), "Correct item counts")
+
 }

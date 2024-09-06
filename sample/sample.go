@@ -1,4 +1,4 @@
-package main
+package sample
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"github.com/zeroboo/randomselector"
 )
 
-func main() {
+func Sample() {
 
 	//Select values randomly with equally rate for each value, 1/3 chance for each value
 	value, errSelect := randomselector.SelectValues("1", "2", "3")

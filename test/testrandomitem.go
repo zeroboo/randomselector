@@ -15,5 +15,5 @@ func (content TestRandomItem) GetName() string {
 }
 
 func (content TestRandomItem) GetContent() any {
-	return content.ID
+	return content.Value
 }

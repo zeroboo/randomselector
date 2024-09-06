@@ -1,7 +1,7 @@
 ## Test
 
-go test github.com/zeroboo/randomselector/test -v
-
+go test ./... -v -coverprofile cover.out
+go tool cover -html cover.out
 ## Deploy script
 
 ```console

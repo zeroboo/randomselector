@@ -1,6 +1,7 @@
 package test
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 
@@ -22,6 +23,27 @@ func TestSelector_SelectEqually_Correct(t *testing.T) {
 		assert.Nil(t, err, "No error")
 		assert.True(t, isString, "Correct selected type")
 	}
+}
+
+// go test -timeout 30s -run ^TestSelector_EmptyValue_ReturnError$ github.com/zeroboo/randomselector/test -v
+func TestSelector_EmptyValue_ReturnError(t *testing.T) {
+	selectedValue, err := randomselector.SelectValues()
+	t.Logf("Selected values: %v", selectedValue)
+	assert.Equal(t, fmt.Sprintf("%s", err), "no value to select", "Correct error")
+}
+
+// go test -timeout 30s -run ^TestSelector_SelectNegativeWeight_ReturnError$ github.com/zeroboo/randomselector/test -v
+func TestSelector_SelectNegativeWeight_ReturnError(t *testing.T) {
+	selectedValue, err := randomselector.SelectWithWeight(randomselector.WeightValue{Value: 1, Weight: -1})
+	t.Logf("Selected values: %v", selectedValue)
+	assert.Equal(t, fmt.Sprintf("%s", err), "invalid weight -1 at index 0", "Correct error")
+}
+
+// go test -timeout 30s -run ^TestSelector_SelectWeight_EmptyValue_ReturnError$ github.com/zeroboo/randomselector/test -v
+func TestSelector_SelectWeight_EmptyValue_ReturnError(t *testing.T) {
+	selectedValue, err := randomselector.SelectWithWeight()
+	t.Logf("Selected values: %v", selectedValue)
+	assert.Equal(t, fmt.Sprintf("%s", err), "no value to select", "Correct error")
 }
 
 // go test -timeout 30s -run ^TestSelector_SelectEquallyStruct_Correct$ github.com/zeroboo/randomselector/test -v
