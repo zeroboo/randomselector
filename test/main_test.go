@@ -21,6 +21,7 @@ func TestMain(m *testing.M) {
 func TestSample_NoError(t *testing.T) {
 	fmt.Println("Test sample function")
 	sample.Sample()
+	
 }
 
 // go test -timeout 30s -run ^TestRandomBagCreating_Correct$ github.com/zeroboo/randomselector/test -v

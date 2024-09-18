@@ -1,4 +1,4 @@
-$VERSION = "v1.0.3"
+$VERSION = "v1.0.4"
 Write-Host Version ${VERSION}
 git tag ${VERSION}
 git push origin ${VERSION}

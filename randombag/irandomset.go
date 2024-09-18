@@ -8,7 +8,7 @@ type IRandomSet interface {
 	SelectRandom() any
 
 	//GetContents returns all possible option of box
-	GetContents() []RandomContent
+	GetContents() []RandomItem
 
 	//GetMaxRate return max values (exclusive in random rates)
 	GetMaxRate() int

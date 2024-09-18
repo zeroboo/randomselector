@@ -9,7 +9,7 @@ go tool cover -html cover.out
 
 ## Publish
 
-Example with VERSION=v0.0.2
+Example with VERSION=v1.0.0
 
 - Tag on git
 

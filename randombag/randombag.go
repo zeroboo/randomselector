@@ -8,9 +8,9 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// RandomBag return object randomly with replacement (each selecting is independent)
+// RandomBag is a collection of items. It can return object randomly with replacement (each selecting is independent)
 type RandomBag struct {
-	contents []RandomContent
+	contents []RandomItem
 
 	//configMaxRate is the preset max rate of this bag. Maybe not the effective rate used when random, see [RandomBag.maxRate]
 	configMaxRate int64
@@ -58,7 +58,7 @@ func (bag *RandomBag) SelectRandom() (any, error) {
 }
 
 // GetContents returns all possible option of box
-func (bag *RandomBag) GetContents() []RandomContent {
+func (bag *RandomBag) GetContents() []RandomItem {
 	return bag.contents
 }
 
@@ -117,7 +117,7 @@ func (bag *RandomBag) String() string {
 }
 
 func (bag *RandomBag) AddItem(item IRandomItem) {
-	newContent := RandomContent{
+	newContent := RandomItem{
 		content: item,
 		rate:    item.GetRate(),
 		name:    item.GetName(),
@@ -145,7 +145,7 @@ const RandomRateNone int64 = -1
 //   - false means picked items will be removed from next random
 //
 // - contents: are items to be randomized in random bag
-func NewRandomBag(maxRate int64, returnSelectedItems bool, contents ...RandomContent) *RandomBag {
+func NewRandomBag(maxRate int64, returnSelectedItems bool, contents ...RandomItem) *RandomBag {
 	var randomBag *RandomBag = &RandomBag{}
 	randomBag.contents = contents
 	randomBag.totalItemRates = randomBag.initRates()
@@ -163,17 +163,17 @@ func NewRandomBag(maxRate int64, returnSelectedItems bool, contents ...RandomCon
 
 // NewRandomBagNoFailure return a random box which:
 //
-//   - All inside items have equal rates
+//   - all items randombag have rates
 //
-//   - Every selecting returns an item (no chance of failure) if the bag has item
-func NewRandomBagNoFailure(hasReplacement bool, contents ...RandomContent) *RandomBag {
+//   - every selecting returns an item (no chance of failure) if the bag has item
+func NewRandomBagNoFailure(hasReplacement bool, contents ...RandomItem) *RandomBag {
 	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
 }
 
-func NewRandomBoxNoFailureFromItems(hasReplacement bool, items ...IRandomItem) *RandomBag {
-	contents := make([]RandomContent, len(items))
+func NewRandomBagNoFailureFromItems(hasReplacement bool, items ...IRandomItem) *RandomBag {
+	contents := make([]RandomItem, len(items))
 	for i := 0; i < len(items); i++ {
-		contents[i] = RandomContent{
+		contents[i] = RandomItem{
 			content: items[i],
 			rate:    items[i].GetRate(),
 		}
