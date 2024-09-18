@@ -28,7 +28,7 @@ func (content RandomItem) GetContent() any {
 	return content.content
 }
 
-func NewRandomContent(name string, rate int64, content any) *RandomItem {
+func NewRandomItem(name string, rate int64, content any) *RandomItem {
 	return &RandomItem{
 		content: content,
 		rate:    rate,
