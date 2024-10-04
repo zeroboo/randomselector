@@ -10,7 +10,7 @@ import (
 
 // RandomBag is a collection of items. It can return object randomly with replacement (each selecting is independent)
 type RandomBag struct {
-	contents []RandomItem
+	contents []IRandomItem
 
 	//configMaxRate is the preset max rate of this bag. Maybe not the effective rate used when random, see [RandomBag.maxRate]
 	configMaxRate int64
@@ -51,14 +51,14 @@ func (bag *RandomBag) SelectRandom() (any, error) {
 	rate := rand.Int63n(bag.maxRate)
 	for i := 0; i < len(bag.accRates); i++ {
 		if rate < bag.accRates[i] {
-			return bag.contents[i].content, nil
+			return bag.contents[i].GetContent(), nil
 		}
 	}
 	return nil, nil
 }
 
 // GetContents returns all possible option of box
-func (bag *RandomBag) GetContents() []RandomItem {
+func (bag *RandomBag) GetContents() []IRandomItem {
 	return bag.contents
 }
 
@@ -82,7 +82,7 @@ func (bag *RandomBag) initRates() int64 {
 	bag.accRates = make([]int64, len(bag.contents))
 	totalAccRate := int64(0)
 	for i := 0; i < len(bag.contents); i++ {
-		totalAccRate += bag.contents[i].rate
+		totalAccRate += bag.contents[i].GetRate()
 		bag.accRates[i] = totalAccRate
 	}
 	bag.updateMaxRates()
@@ -145,7 +145,7 @@ const RandomRateNone int64 = -1
 //   - false means picked items will be removed from next random
 //
 // - contents: are items to be randomized in random bag
-func NewRandomBag(maxRate int64, returnSelectedItems bool, contents ...RandomItem) *RandomBag {
+func NewRandomBag(maxRate int64, returnSelectedItems bool, contents ...IRandomItem) *RandomBag {
 	var randomBag *RandomBag = &RandomBag{}
 	randomBag.contents = contents
 	randomBag.totalItemRates = randomBag.initRates()
@@ -161,17 +161,8 @@ func NewRandomBag(maxRate int64, returnSelectedItems bool, contents ...RandomIte
 	return randomBag
 }
 
-// NewRandomBagNoFailure return a random box which:
-//
-//   - all items randombag have rates
-//
-//   - every selecting returns an item (no chance of failure) if the bag has item
-func NewRandomBagNoFailure(hasReplacement bool, contents ...RandomItem) *RandomBag {
-	return NewRandomBag(RandomRateNone, hasReplacement, contents...)
-}
-
-func NewRandomBagNoFailureFromItems(hasReplacement bool, items ...IRandomItem) *RandomBag {
-	contents := make([]RandomItem, len(items))
+func NewRandomBagNoFailure(hasReplacement bool, items ...IRandomItem) *RandomBag {
+	contents := make([]IRandomItem, len(items))
 	for i := 0; i < len(items); i++ {
 		contents[i] = RandomItem{
 			content: items[i],
