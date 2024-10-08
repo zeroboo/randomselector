@@ -40,7 +40,7 @@ type RandomBag struct {
 
 // Select returns an object randomly with replacement.
 // Nil result means nothing selected
-func (bag *RandomBag) SelectRandom() (any, error) {
+func (bag *RandomBag) Select() (any, error) {
 	if bag.accRates == nil {
 		bag.initRates()
 	}

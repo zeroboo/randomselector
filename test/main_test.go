@@ -51,7 +51,7 @@ func TestRandomBag_SelectingFullRate_NoNilResult(t *testing.T) {
 	assert.Equal(t, 4, len(randomBox.GetContents()), "Correct content size")
 	assert.Equal(t, "[100 300 600 1000]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
-		selectedValue, _ := randomBox.SelectRandom()
+		selectedValue, _ := randomBox.Select()
 		t.Logf("Selected values: %v", selectedValue)
 		assert.NotEqual(t, nil, selectedValue, "Selected value must not be nil")
 	}
@@ -72,7 +72,7 @@ func TestRandomBag_SelectingFullRateWithStruct_NoNilResult(t *testing.T) {
 	assert.Equal(t, 4, len(randomBox.GetContents()), "Correct content size")
 	assert.Equal(t, "[100 300 600 1000]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
-		selectedValue, _ := randomBox.SelectRandom()
+		selectedValue, _ := randomBox.Select()
 		t.Logf("Selected values: %v %v", selectedValue, selectedValue.(TestRandomItem).GetContent())
 		assert.NotEqual(t, nil, selectedValue, "Selected value must not be nil")
 		assert.IsType(t, TestRandomItem{}, selectedValue, "Correct selected type")
@@ -93,7 +93,7 @@ func TestRandomBag_SelectedNil_Correct(t *testing.T) {
 	assert.Equal(t, 2, len(randomBox.GetContents()), "Correct content size")
 	assert.Equal(t, "[0 0]", fmt.Sprintf("%v", randomBox.GetAccRates()), "Correct content size")
 	for i := 0; i < 100; i++ {
-		selectedValue, _ := randomBox.SelectRandom()
+		selectedValue, _ := randomBox.Select()
 		t.Logf("Selected values: %v", selectedValue)
 		assert.Equal(t, nil, selectedValue, "Selected value must be nil")
 	}
